@@ -17,7 +17,7 @@ local function stringReplaceAll(string_, substring, replacer)
 end
 
 -- ROBLOX NOTE: inline stringEncaseCRLFWithFirstIndex to keep ChalkLua as one file
-local function stringEncaseCRLFWithFirstIndex(string_, prefix, postfix, index)
+local function stringEncaseCRLFWithFirstIndex(string_: string, prefix: string, postfix: string, index: number )
 	local endIndex = 1
 	local returnValue = ""
 	repeat
@@ -26,7 +26,7 @@ local function stringEncaseCRLFWithFirstIndex(string_, prefix, postfix, index)
 			then "\r\n"
 			else "\n") .. postfix
 		endIndex = index + 1
-		index = string.find(string_, "\n", endIndex)
+		index = string.find(string_, "\n", endIndex) :: number
 	until not (index ~= nil)
 	returnValue ..= string.sub(string_, endIndex)
 	return returnValue
@@ -112,13 +112,13 @@ end
 local createStyler
 local applyStyle
 
-local function compositeStyler(style, otherStyle)
+local function compositeStyler(style: { close: string, open: string }, otherStyle: { close: string, open: string })
 	return createStyler(style.open .. otherStyle.open, otherStyle.close .. style.close)
 end
 
-local function foundProcessService()
+local function foundProcessService(): boolean
 	local success = pcall(function()
-		game:GetService("ProcessService")
+		game:GetService("ProcessService" :: any)
 	end)
 	return success
 end
@@ -127,6 +127,15 @@ local Chalk = { level = 2 }
 if _G.NOCOLOR or not foundProcessService() then
 	Chalk.level = 0
 end
+
+export type ChalkImpl = {
+	__index: ChalkImpl,
+	__call: (_: any, str: string) -> (string),
+}
+
+export type Chalk = typeof(setmetatable({} :: {
+	level: number,
+}, {} :: ChalkImpl))
 
 setmetatable(Chalk, {
 	__call = function(_, str)
@@ -137,7 +146,18 @@ setmetatable(Chalk, {
 	end,
 })
 
-function createStyler(open, close)
+export type StylesImpl = {
+	__index: StylesImpl,
+	__call: (self: Styles, str: string) -> string,
+	__concat: (self: Styles, other: { close: string, open: string }) -> (Styles),
+}
+
+export type Styles = typeof(setmetatable({} :: {
+	open: string,
+	close: string,
+}, {} :: StylesImpl))
+
+function createStyler(open: string, close: string)
 	local styler = {
 		open = open,
 		close = close,
@@ -152,10 +172,10 @@ function createStyler(open, close)
 		end,
 	})
 
-	return styler
+	return (styler :: any) :: Styles
 end
 
-function applyStyle(self, str)
+function applyStyle(self: Styles, str: string): string
 	if str == nil or type(str) == "string" and #str == 0 then
 		return ""
 	end
@@ -186,7 +206,7 @@ function applyStyle(self, str)
 	return self.open .. tostring(str) .. self.close
 end
 
-local function noStyle()
+local function noStyle(): Styles
 	return createStyler("", "")
 end
 
@@ -200,7 +220,7 @@ end
 
 Chalk["reset"] = createStyler(reset, reset)
 
-local function rgbToAnsi256(red, green, blue)
+local function rgbToAnsi256(red: number, green: number, blue: number): number
 	if red == green and green == blue then
 		if red < 8 then
 			return 16
@@ -219,7 +239,7 @@ local function rgbToAnsi256(red, green, blue)
 	return ansi
 end
 
-Chalk["rgb"] = function(red, green, blue)
+Chalk["rgb"] = function(red: number, green: number, blue: number): Styles
 	if
 		type(red) ~= "number"
 		or type(green) ~= "number"
@@ -237,7 +257,7 @@ Chalk["rgb"] = function(red, green, blue)
 	return createStyler(open, close)
 end
 
-Chalk["bgRgb"] = function(red, green, blue)
+Chalk["bgRgb"] = function(red: number, green: number, blue: number): Styles
 	if
 		type(red) ~= "number"
 		or type(green) ~= "number"
@@ -255,7 +275,7 @@ Chalk["bgRgb"] = function(red, green, blue)
 	return createStyler(open, bgClose)
 end
 
-local function hexToRgb(hex)
+local function hexToRgb(hex: string): number
 	local red = tonumber(string.sub(hex, 2, 3), 16)
 	local blue = tonumber(string.sub(hex, 4, 5), 16)
 	local green = tonumber(string.sub(hex, 6, 7), 16)
@@ -263,7 +283,7 @@ local function hexToRgb(hex)
 	return rgbToAnsi256(red, blue, green)
 end
 
-Chalk["hex"] = function(hex)
+Chalk["hex"] = function(hex: string): Styles
 	if type(hex) ~= "string" or string.find(hex, "#%X") ~= nil or #hex ~= 7 then
 		return noStyle()
 	end
@@ -271,7 +291,7 @@ Chalk["hex"] = function(hex)
 	return createStyler(open, close)
 end
 
-Chalk["bgHex"] = function(hex)
+Chalk["bgHex"] = function(hex: string): Styles
 	if type(hex) ~= "string" or string.find(hex, "#%X") ~= nil or #hex ~= 7 then
 		return noStyle()
 	end
@@ -279,7 +299,7 @@ Chalk["bgHex"] = function(hex)
 	return createStyler(open, bgClose)
 end
 
-Chalk["ansi"] = function(ansi)
+Chalk["ansi"] = function(ansi: number): Styles
 	if type(ansi) ~= "number" or ansi < 30 or (ansi > 37 and ansi < 90) or ansi > 97 then
 		return noStyle()
 	end
@@ -287,7 +307,7 @@ Chalk["ansi"] = function(ansi)
 	return createStyler(open, close)
 end
 
-Chalk["bgAnsi"] = function(ansi)
+Chalk["bgAnsi"] = function(ansi: number): Styles
 	if type(ansi) ~= "number" or ansi < 40 or (ansi > 47 and ansi < 100) or ansi > 107 then
 		return noStyle()
 	end
@@ -295,7 +315,7 @@ Chalk["bgAnsi"] = function(ansi)
 	return createStyler(open, bgClose)
 end
 
-Chalk["ansi256"] = function(ansi)
+Chalk["ansi256"] = function(ansi: number): Styles
 	if type(ansi) ~= "number" or ansi < 0 or ansi > 255 then
 		return noStyle()
 	end
@@ -303,7 +323,7 @@ Chalk["ansi256"] = function(ansi)
 	return createStyler(open, close)
 end
 
-Chalk["bgAnsi256"] = function(ansi)
+Chalk["bgAnsi256"] = function(ansi: number): Styles
 	if type(ansi) ~= "number" or ansi < 0 or ansi > 255 then
 		return noStyle()
 	end
