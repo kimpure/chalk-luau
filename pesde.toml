@@ -1,0 +1,15 @@
+name = "kimpure/chalk_luau"
+version = "0.1.0"
+description = "Roblox/chalk-lua for Luau"
+authors = ["Roblox", "kimpure"]
+repository = "https://github.com/kimpure/chalk-luau"
+license = "MIT"
+includes = ["src", "README.md", "LICENSE.md", "pesde.toml"]
+
+[target]
+environment = "luau"
+lib = "src/init.luau"
+build_files = ["src"]
+
+[indices]
+default = "https://github.com/pesde-pkg/index"
