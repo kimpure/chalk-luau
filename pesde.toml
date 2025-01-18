@@ -1,5 +1,5 @@
 name = "kimpure/chalk_luau"
-version = "0.1.1"
+version = "0.1.2"
 description = "Roblox/chalk-lua for Luau"
 authors = ["Roblox", "kimpure"]
 repository = "https://github.com/kimpure/chalk-luau"
