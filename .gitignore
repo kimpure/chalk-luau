@@ -1,11 +1,3 @@
-/*.rbxmx
-Packages/*
-!Packages/.robloxrc
-rotriever.lock
-
-# Selene
-roblox.toml
-
-# Editor files
-.vscode/launch.json
-.idea
+luau_packages
+lune_packages
+target
