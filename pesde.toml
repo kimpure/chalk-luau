@@ -1,10 +1,10 @@
 name = "kimpure/chalk_luau"
-version = "0.1.3"
+version = "0.1.6"
 description = "Roblox/chalk-lua for Luau"
 authors = ["Roblox", "kimpure"]
 repository = "https://github.com/kimpure/chalk-luau"
 license = "MIT"
-includes = ["src", "README.md", "LICENSE.md", "pesde.toml"]
+includes = ["src/**", "README.md", "LICENSE.md", "pesde.toml"]
 
 [target]
 environment = "luau"
