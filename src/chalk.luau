@@ -118,6 +118,10 @@ local function compositeStyler(style, otherStyle)
 end
 
 local Chalk = { level = 2 }
+if _G.LUA_ENV == "roblox" then
+	-- Ansi colors are not supported in Roblox, so set level to 0.
+	Chalk.level = 0
+end
 
 setmetatable(Chalk, {
 	__call = function(_, str)
