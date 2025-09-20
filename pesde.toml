@@ -1,5 +1,5 @@
 name = "kimpure/chalk_luau"
-version = "0.1.7"
+version = "0.1.8"
 description = "Roblox/chalk-lua for Luau"
 authors = ["Roblox", "kimpure"]
 repository = "https://github.com/kimpure/chalk-luau"
@@ -7,7 +7,7 @@ license = "MIT"
 includes = ["src/**/*.luau", "README.md", "LICENSE.md", "pesde.toml"]
 
 [target]
-environment = "luau"
+environment = "roblox"
 lib = "src/lib.luau"
 build_files = ["src"]
 
@@ -16,4 +16,4 @@ default = "https://github.com/pesde-pkg/index"
 
 [dev_dependencies]
 darklua = { name = "pesde/darklua", version = "^0.16.0", target = "lune" }
-multitarget = { name = "jiwonz/multitarget", version = "^0.4.0-rc.28", target = "lune" }
+multitarget = { name = "jiwonz/multitarget", version = "^0.4.0-rc.30", target = "lune" }
